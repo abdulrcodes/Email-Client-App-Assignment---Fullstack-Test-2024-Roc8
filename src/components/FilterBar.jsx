@@ -28,7 +28,7 @@ const FilterBar = () => {
   };
 
   return (
-    <div className="filter-bar">
+    <header className="filter-bar">
       <span>Filter By:</span>
       <button
         className={filters.unread ? "active" : ""}
@@ -49,7 +49,7 @@ const FilterBar = () => {
       >
         Favorites
       </button>
-    </div>
+    </header>
   );
 };
 

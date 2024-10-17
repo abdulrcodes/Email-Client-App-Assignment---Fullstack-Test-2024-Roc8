@@ -20,10 +20,10 @@ const InnerApp = () => {
   const { selectedEmail } = useContext(EmailContext); // Move context use here
 
   return (
-    <div className="app-container">
+    <main className="app-container">
       <FilterBar /> {/* Filter bar to filter emails */}
       <div className="email-view">
-        <div
+        <section
           className="email-list-container"
           style={{
             width: selectedEmail ? "40%" : "100%", // Adjust width based on email selection
@@ -32,14 +32,14 @@ const InnerApp = () => {
         >
           <EmailList /> {/* Email list component */}
           <Pagination /> {/* Pagination controls */}
-        </div>
+        </section>
         {selectedEmail && (
-          <div className="email-body-container">
+          <section className="email-body-container">
             <EmailBody /> {/* Email body component (on selection) */}
-          </div>
+          </section>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 
