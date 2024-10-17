@@ -146,13 +146,13 @@
 }
 
 .from p {
-  color: #636363; /* Text color for 'From' label */
-  margin: 0; /* Remove default margin */
+  color: #636363;
+  margin: 0;
 }
 
 .from h3 {
-  margin: 0; /* Remove default margin */
-  color: #636363; /* Text color for sender's name */
+  margin: 0;
+  color: #636363;
 }
 
 .subject {
@@ -161,17 +161,17 @@
   gap: 2px;
 }
 h3 {
-  margin: 5px 0; /* Margin for subject */
+  margin: 5px 0;
 }
 
 p {
-  margin: 5px 0; /* Margin for short description */
-  color: #636363; /* Text color for description */
+  margin: 5px 0;
+  color: #636363;
 }
 
 span {
-  color: #636363; /* Text color for date */
-  font-size: 0.9em; /* Slightly smaller font size */
+  color: #636363;
+  font-size: 0.9em;
 }
 
 .favorite-label {
