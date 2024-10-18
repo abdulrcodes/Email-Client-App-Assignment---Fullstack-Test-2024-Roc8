@@ -47,16 +47,14 @@ const EmailBody = () => {
           <h1>{selectedEmail.subject}</h1>
           <span>{new Date(selectedEmail.date).toLocaleString()}</span>
         </div>
-        <button className="mark-favorite" onClick={toggleFavorite}>
+        <a href="/" className="mark-favorite" onClick={toggleFavorite}>
           {isFavorite ? "Unmark as favorite" : "Mark as favorite"}
           {/* Use local state for immediate feedback */}
-        </button>
+        </a>
       </div>
       {emailBody ? (
         <div>
           <p className="email-text">{stripHtml(emailBody.body)}</p>
-          {isFavorite && <span className="favorite-label">Favorite</span>}
-          {/* Display "Favorite" label instantly */}
         </div>
       ) : (
         <p>Loading...</p>
