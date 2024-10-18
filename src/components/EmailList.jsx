@@ -3,8 +3,11 @@ import EmailContext from "../context/emailContext";
 import EmailItem from "./EmailItem";
 
 const EmailList = () => {
-  const { emails, selectedEmail } = useContext(EmailContext);
+  const { emails, selectedEmail, loading } = useContext(EmailContext);
 
+  if (loading) {
+    return <div>Loading emails...</div>;
+  }
   return (
     <div className="email-list">
       {emails.length > 0 ? (

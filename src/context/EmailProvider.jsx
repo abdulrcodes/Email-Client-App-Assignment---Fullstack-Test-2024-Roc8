@@ -3,10 +3,11 @@ import EmailContext from "./emailContext";
 
 const EmailProvider = ({ children }) => {
   const [emails, setEmails] = useState([]);
+  const [loading, setLoading] = useState(true); // State to track loading status
   const [selectedEmail, setSelectedEmail] = useState(null);
-  const [selectedEmailIds, setSelectedEmailIds] = useState([]); // State to track selected email IDs
-  const [readEmailIds, setReadEmailIds] = useState([]); // State to track read email IDs
-  const [isFavorite, setIsFavorite] = useState(false); // Initialize as false
+  const [selectedEmailIds, setSelectedEmailIds] = useState([]);
+  const [readEmailIds, setReadEmailIds] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const [filters, setFilters] = useState({
     read: false,
@@ -16,9 +17,13 @@ const EmailProvider = ({ children }) => {
 
   // Fetch emails initially
   useEffect(() => {
+    setLoading(true); // Start loading
     fetch("https://flipkart-email-mock.now.sh/")
       .then((response) => response.json())
-      .then((data) => setEmails(data.list));
+      .then((data) => {
+        setEmails(data.list);
+        setLoading(false); // Stop loading after data is fetched
+      });
   }, []);
 
   // Load selected email IDs and read email IDs from local storage when component mounts
@@ -45,9 +50,9 @@ const EmailProvider = ({ children }) => {
   // Function to mark an email as read
   const markEmailAsRead = (emailId) => {
     setReadEmailIds((prevReadIds) => {
-      const updatedReadIds = [...new Set([...prevReadIds, emailId])]; // Ensure uniqueness
-      localStorage.setItem("readEmailIds", JSON.stringify(updatedReadIds)); // Store updated read IDs
-      return updatedReadIds; // Update the state with the new array
+      const updatedReadIds = [...new Set([...prevReadIds, emailId])];
+      localStorage.setItem("readEmailIds", JSON.stringify(updatedReadIds));
+      return updatedReadIds;
     });
   };
 
@@ -57,14 +62,13 @@ const EmailProvider = ({ children }) => {
 
     return emails.filter((email) => {
       const isFavorite = favoriteEmails.includes(email.id);
-      const isRead = readEmailIds.includes(email.id); // Check from readEmailIds array
+      const isRead = readEmailIds.includes(email.id);
 
-      // Filter logic
-      if (filters.favorite && !isFavorite) return false; // If filtering by favorite
-      if (filters.read && !isRead) return false; // If filtering by read emails
-      if (filters.unread && isRead) return false; // If filtering by unread emails
+      if (filters.favorite && !isFavorite) return false;
+      if (filters.read && !isRead) return false;
+      if (filters.unread && isRead) return false;
 
-      return true; // Include the email if none of the filters block it
+      return true;
     });
   };
 
@@ -72,49 +76,40 @@ const EmailProvider = ({ children }) => {
   const toggleEmailSelection = (emailId) => {
     setSelectedEmailIds((prevSelectedIds) => {
       const emailIsSelected = prevSelectedIds.includes(emailId);
-
-      // If email is selected, remove it from selectedEmailIds, otherwise add it
       const newSelectedIds = emailIsSelected
-        ? prevSelectedIds.filter((id) => id !== emailId) // Remove if already selected
-        : [...prevSelectedIds, emailId]; // Add if not selected
+        ? prevSelectedIds.filter((id) => id !== emailId)
+        : [...prevSelectedIds, emailId];
 
-      updateSelectedEmailIds(newSelectedIds); // Update local storage with new list
+      updateSelectedEmailIds(newSelectedIds);
       return newSelectedIds;
     });
   };
 
   // Function to handle toggling the favorite status
   const toggleFavorite = () => {
-    // Update the emails array by toggling the favorite status
     const updatedEmails = emails.map((email) => {
       if (email.id === selectedEmail.id) {
-        // Toggle the favorite status
-        const newFavoriteStatus = !isFavorite; // Use local state to determine the new status
-        setIsFavorite(newFavoriteStatus); // Update local state immediately
-        return { ...email, favorite: newFavoriteStatus }; // Return a new object with the updated status
+        const newFavoriteStatus = !isFavorite;
+        setIsFavorite(newFavoriteStatus);
+        return { ...email, favorite: newFavoriteStatus };
       }
-      return email; // Return the unchanged email
+      return email;
     });
 
-    setEmails(updatedEmails); // Update the emails in context
+    setEmails(updatedEmails);
 
-    // Get existing favorite emails from localStorage or create a new array
     const favoriteEmails =
       JSON.parse(localStorage.getItem("favoriteEmails")) || [];
 
-    // Check if the email is already a favorite
     if (!isFavorite) {
-      // If it's not marked as favorite, add it to the array
-      favoriteEmails.push(selectedEmail.id); // Use selectedEmail.id to store the email ID
+      favoriteEmails.push(selectedEmail.id);
     } else {
-      // If it's already a favorite, remove it from the array
-      const index = favoriteEmails.indexOf(selectedEmail.id); // Use selectedEmail.id to find the email ID
+      const index = favoriteEmails.indexOf(selectedEmail.id);
       if (index > -1) {
-        favoriteEmails.splice(index, 1); // Remove the email ID from the array
+        favoriteEmails.splice(index, 1);
       }
     }
 
-    // Store the updated favorite emails in localStorage
     localStorage.setItem("favoriteEmails", JSON.stringify(favoriteEmails));
   };
 
@@ -124,16 +119,17 @@ const EmailProvider = ({ children }) => {
         toggleFavorite,
         isFavorite,
         setIsFavorite,
-        emails: filteredEmails(), // Use the filtered emails in context
+        emails: filteredEmails(),
         setEmails,
         selectedEmail,
         setSelectedEmail,
-        selectedEmailIds, // Provide selected email IDs in context
-        toggleEmailSelection, // Provide the toggle function in context
-        markEmailAsRead, // Provide the function to mark emails as read
-        readEmailIds, // Provide read email IDs in context
+        selectedEmailIds,
+        toggleEmailSelection,
+        markEmailAsRead,
+        readEmailIds,
         filters,
         setFilters,
+        loading,
       }}
     >
       {children}
